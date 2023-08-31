@@ -1,11 +1,6 @@
 import { SupabaseClient, createClient } from '@supabase/supabase-js'
 import { log } from 'console';
 
-enum Role {
-  author = 'author',
-  user = 'user'
-}
-
 class Database {
   static supabase?: SupabaseClient<any, "public", any>;
 
@@ -15,31 +10,36 @@ class Database {
     }
   }
 
-  static async createUser(email: string, password: string) {
-    try {
-      this.init();
-      const { data } = await this.supabase!.auth.signUp({
-        email,
-        password, 
-      });
-      console.log('CreateUser: ', data);
-
-    } catch (err) {
-      console.log('CreateUser Error: ', err);
-
+  static async createUser(email: string, password: string, name: string, isAuthor: boolean = false) {
+    this.init();
+    const { data, error } = await this.supabase!.auth.signUp({
+      email,
+      password, options: {
+        data: {
+          name,
+          isAuthor,
+        }
+      }
+    });
+    console.log('CreateUser: ', data);
+    if (data) {
+      return data;
+    } else {
+      throw new Error(error?.message);
     }
+
   }
   static async signin(email: string, password: string) {
-    try {
-      this.init();
-      const { data } = await this.supabase!.auth.signInWithPassword({
-        email,
-        password,
-      });
-      console.log('Signin: ', data);
-
-    } catch (err) {
-      console.log('Signin Error: ', err);
+    this.init();
+    const { data, error } = await this.supabase!.auth.signInWithPassword({
+      email,
+      password,
+    });
+    console.log('Signin: ', data, error);
+    if (data) {
+      return data;
+    } else {
+      throw new Error(error?.message);
     }
   }
 }

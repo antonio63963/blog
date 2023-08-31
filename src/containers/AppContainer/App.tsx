@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 
 import routes from "../../routes";
 
-import "./App.css";
+import storage from '../../data/storage';
 
 
 import { AppProps, Tokens, UserInfo } from "./App.type";
@@ -17,7 +17,7 @@ const App: FC<AppProps> = function App({history}) {
   const [{ isModal, title: modalTitle, message: modalMessage }, setModal] =
     useState({ isModal: false, title: "", message: "" });
   const [isAuthenticated, setIsUserAuthenticated] = useState(
-    // !!storage.getTokens()
+    !!storage.getTokens()
   );
   const [avatar, setAvatar] = useState<string>("");
   const [isAvatar, setIsAvatar] = useState<boolean>(true);
