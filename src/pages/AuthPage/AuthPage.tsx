@@ -74,9 +74,11 @@ const AuthPage: FC = () => {
   }, [])
 
   return (
-    // <AuthPageLayout methods={methods} />
-    <AuthPageLayout onSubmit={isSignin ? onSignIn : onSignUp} methods={methods} />
-    // <AuthPageLayout onSubmit={isSignin ? onSignIn : onSignUp} control={control} formErrors={errors} />
+    <AuthPageLayout onSubmit={
+      isSignin ? onSignIn : onSignUp}
+      methods={methods} isSignIn={isSignin}
+      switchIsSignIn={() => setIsSignin(!isSignin)
+    } />
   )
 };
 

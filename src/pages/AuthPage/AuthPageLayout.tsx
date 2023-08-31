@@ -1,16 +1,26 @@
 import React, { FC, useState } from "react";
-import { Button, Card, Container, FilledInput, IconButton, InputAdornment, InputLabel, SxProps, TextField } from "@mui/material/";
+import { Box, Button, Card, Checkbox, Container, FilledInput, FormControlLabel, FormGroup, IconButton, InputAdornment, InputLabel, SxProps, TextField } from "@mui/material/";
 import { Control, Controller, FieldValues, FormProvider, UseFormReturn, useForm } from "react-hook-form";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-
+import { CheckBox, Label, Visibility, VisibilityOff } from "@mui/icons-material";
 
 const classes: { [key: string]: SxProps } = {
+  root: { height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  titleRow: { width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 0 },
+  switchMode: { background: 'none', p: 0, fontSize: 12, '&:hover': { background: 'none', color: '#80DEEA' } },
   input: { mt: 2, mb: 2 },
-  card: { display: 'flex', flexDirection: 'column', width: 500, pl: 4, pr: 4, height: 500 }
+  card: { display: 'flex', flexDirection: 'column', width: '100%', minWidth: 320, p: 4, height: '100%' },
+  submit: {
+    alignSelf: 'flex-end', pt: 1, pb: 1, pl: 2, pr: 2, '&:hover': {
+      background: '#80DEEA',
+      color: '#fff',
+    }
+  },
 }
 
 type AuthT = {
   onSubmit: (data: any) => void;
+  switchIsSignIn: () => void;
+  isSignIn: boolean;
   // control: Control<FieldValues, any>;
   // // handleSubmit: (data: FieldValues) => void;
   // formErrors: {
@@ -19,7 +29,7 @@ type AuthT = {
   methods: UseFormReturn;
 }
 
-const AuthPageLayout: FC<AuthT> = ({ onSubmit, methods }) => {
+const AuthPageLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods }) => {
   // const methods = useForm();
   const [showPassword, setShowPassword] = React.useState(false);
   const { control, handleSubmit, formState: { errors } } = methods;
@@ -27,7 +37,8 @@ const AuthPageLayout: FC<AuthT> = ({ onSubmit, methods }) => {
     name: '',
     email: '',
     password: '',
-    repeatPassword: ''
+    repeatPassword: '',
+    isAuthor: false
   }); // to avoid react swear on none control
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -36,35 +47,41 @@ const AuthPageLayout: FC<AuthT> = ({ onSubmit, methods }) => {
   };
 
   return (
-    <Container sx={{ height: '100vh', display: 'flex', alignContent: 'center', justifyContent: 'center' }}>
+    <Container sx={classes.root}>
       {/* <FormProvider {...methods}> */}
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card sx={classes.card}>
-          <h1 className="title">Sign Up</h1>
-          <Controller
-            name="name"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <TextField
-                sx={classes.input}
-                required
-                value={values.name}
-                onChange={(e) => {
-                  setValues((currentState) => ({ ...currentState, name: e.target.value }));
-                  onChange(e);
-                }}
-                variant="filled"
-                label="Name"
-              />
-            )}
-          />
-          {errors.name && (
-            <span>{errors.name.message as string}</span>
-          )}
+          <Box sx={classes.titleRow}>
+            <h1 className="title">{isSignIn ? 'Sign In' : 'Sign Up'}</h1>
+            <Button sx={classes.switchMode} onClick={switchIsSignIn}>{isSignIn ? 'Sign Up' : 'Sign In'}</Button>
+          </Box>
+
+          {isSignIn && <>
+            <Controller
+              name="name"
+              control={control}
+              render={({ field: { onChange } }) => (
+                <TextField
+                  sx={classes.input}
+                  required
+                  value={values.name}
+                  onChange={(e) => {
+                    setValues((currentState) => ({ ...currentState, name: e.target.value }));
+                    onChange(e);
+                  }}
+                  variant="filled"
+                  label="Name"
+                />
+              )}
+            />
+            {errors.name && (
+              <span>{errors.name.message as string}</span>
+            )}</>}
+
           <Controller
             name="email"
             control={control}
-            render={({ field: { value, onChange } }) => (
+            render={({ field: { onChange } }) => (
               <TextField
                 sx={classes.input}
                 type="email"
@@ -85,7 +102,7 @@ const AuthPageLayout: FC<AuthT> = ({ onSubmit, methods }) => {
           <Controller
             name="password"
             control={control}
-            render={({ field: { value, onChange } }) => (
+            render={({ field: { onChange } }) => (
               <FilledInput
                 sx={classes.input}
                 required
@@ -113,38 +130,62 @@ const AuthPageLayout: FC<AuthT> = ({ onSubmit, methods }) => {
           {errors.password && (
             <span>{errors.password.message as string}</span>
           )}
-          <Controller
-            name="repeatPassword"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <FilledInput
-                sx={classes.input}
-                required
-                value={values.repeatPassword}
-                onChange={(e) => {
-                  setValues((currentState) => ({ ...currentState, repeatPassword: e.target.value }));
-                  onChange(e);
-                }}
-                type={showPassword ? 'text' : 'password'}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
+
+          {isSignIn && <>
+            <Controller
+              name="repeatPassword"
+              control={control}
+              render={({ field: { onChange } }) => (
+                <FilledInput
+                  sx={classes.input}
+                  required
+                  value={values.repeatPassword}
+                  onChange={(e) => {
+                    setValues((currentState) => ({ ...currentState, repeatPassword: e.target.value }));
+                    onChange(e);
+                  }}
+                  type={showPassword ? 'text' : 'password'}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              )}
+            />
+            {errors.repeatPassword && (
+              <span>{errors.repeatPassword.message as string}</span>
             )}
-          />
-          {errors.repeatPassword && (
-            <span>{errors.repeatPassword.message as string}</span>
-          )}
-          <Button type="submit">Submit</Button>
+
+            <FormControlLabel label='Are you author?' control={
+              <Controller
+                name="isAuthor"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <Checkbox
+                    value={values.isAuthor}
+                    onChange={(e: { target: { value: any; }; }) => {
+                      setValues((currentState) => ({ ...currentState, isAuthor: e.target.value }));
+                      onChange(e);
+                    }}
+                  />
+                )}
+              />
+            } />
+            {errors.repeatPassword && (
+              <span>{errors.repeatPassword.message as string}</span>
+            )}</>}
+
+
+          <Button sx={classes.submit} type="submit">Submit</Button>
+
         </Card>
       </form>
       {/* </FormProvider> */}
