@@ -1,4 +1,4 @@
-const TOKENS = "tokens";
+const ACCESS_TOKEN = 'accessToken';
 const USER_INFO = "userInfo";
 
 type Tokens = {
@@ -7,17 +7,16 @@ type Tokens = {
 };
 
 class LStorage {
-  getTokens() {
-    const tokens = window.localStorage.getItem(TOKENS);
-    return tokens ? JSON.parse(tokens) : null;
+   getToken() {
+    return window.localStorage.getItem(ACCESS_TOKEN);
   }
 
-  saveTokens(tokens: Tokens) {
-    window.localStorage.setItem(TOKENS, JSON.stringify(tokens));
+  saveToken(token: string) {
+    window.localStorage.setItem(ACCESS_TOKEN, token);
   }
 
-  destroyTokens() {
-    window.localStorage.removeItem(TOKENS);
+  destroyToken() {
+    window.localStorage.removeItem(ACCESS_TOKEN);
   }
   clearStorage() {
     window.localStorage.clear();

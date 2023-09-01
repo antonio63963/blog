@@ -4,9 +4,9 @@ type AppProps = {
   history: ReturnType<typeof createBrowserHistory>
 };
 
-type Tokens = {
-  accessToken: string;
-};
+// type Token = {
+//   accessToken: string;
+// };
 
 type UserInfo = {
   id: string;
@@ -14,4 +14,4 @@ type UserInfo = {
   email: string;
 };
 
-export type { AppProps, Tokens, UserInfo, };
+export type { AppProps, UserInfo, };

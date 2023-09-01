@@ -3,6 +3,9 @@ import { Box, Button, Card, Checkbox, Container, FilledInput, FormControlLabel, 
 import { Control, Controller, FieldValues, FormProvider, UseFormReturn, useForm } from "react-hook-form";
 import { CheckBox, Label, Visibility, VisibilityOff } from "@mui/icons-material";
 
+import styles from './AuthPage.module.css';
+import cn from 'classnames';
+
 const classes: { [key: string]: SxProps } = {
   root: { height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   titleRow: { width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 0 },
@@ -30,7 +33,6 @@ type AuthT = {
 }
 
 const AuthPageLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods }) => {
-  // const methods = useForm();
   const [showPassword, setShowPassword] = React.useState(false);
   const { control, handleSubmit, formState: { errors } } = methods;
   const [values, setValues] = useState({
@@ -56,7 +58,7 @@ const AuthPageLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods
             <Button sx={classes.switchMode} onClick={switchIsSignIn}>{isSignIn ? 'Sign Up' : 'Sign In'}</Button>
           </Box>
 
-          {isSignIn && <>
+          {!isSignIn && <>
             <Controller
               name="name"
               control={control}
@@ -75,7 +77,7 @@ const AuthPageLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods
               )}
             />
             {errors.name && (
-              <span>{errors.name.message as string}</span>
+              <span className={cn(styles.errorNote)}>{errors.name.message as string}</span>
             )}</>}
 
           <Controller
@@ -97,7 +99,7 @@ const AuthPageLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods
             )}
           />
           {errors.email && (
-            <span>{errors.email.message as string}</span>
+            <span className={cn(styles.errorNote)}>{errors.email.message as string}</span>
           )}
           <Controller
             name="password"
@@ -128,10 +130,10 @@ const AuthPageLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods
             )}
           />
           {errors.password && (
-            <span>{errors.password.message as string}</span>
+            <span className={cn(styles.errorNote)}>{errors.password.message as string}</span>
           )}
 
-          {isSignIn && <>
+          {!isSignIn && <>
             <Controller
               name="repeatPassword"
               control={control}
@@ -161,7 +163,7 @@ const AuthPageLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods
               )}
             />
             {errors.repeatPassword && (
-              <span>{errors.repeatPassword.message as string}</span>
+              <span className={cn(styles.errorNote)}>{errors.repeatPassword.message as string}</span>
             )}
 
             <FormControlLabel label='Are you author?' control={
@@ -179,9 +181,7 @@ const AuthPageLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods
                 )}
               />
             } />
-            {errors.repeatPassword && (
-              <span>{errors.repeatPassword.message as string}</span>
-            )}</>}
+            </>}
 
 
           <Button sx={classes.submit} type="submit">Submit</Button>
@@ -189,7 +189,7 @@ const AuthPageLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods
         </Card>
       </form>
       {/* </FormProvider> */}
-    </Container>
+    </Container> 
   )
 };
 

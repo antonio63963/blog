@@ -7,11 +7,12 @@ import Database from '../../data/database';
 
 import { UseFormReturn, useForm } from 'react-hook-form';
 
-const validationSchema = z.object({
+const validationSchemaSignUp = z.object({
   name: z.string().min(2, 'String must contain at list 2 characters'),
   email: z.string().email().transform((val) => val.trim()),
   password: z.string().min(6),
-  repeatPassword: z.string().min(6)
+  repeatPassword: z.string().min(6),
+  isAuthor: z.boolean()
 }).superRefine(({ repeatPassword, password }, ctx) => {
   if (repeatPassword !== password) {
     ctx.addIssue({
@@ -22,55 +23,49 @@ const validationSchema = z.object({
   }
 });
 
-type FormData = {
-  name: string;
-  email: string;
-  password: string;
-  repeatPassword: string;
-  isAuthor: boolean;
-}
+const validationSchemaLogin = z.object({
+  email: z.string().email().transform((val) => val.trim()),
+  password: z.string().min(6)
+});
 
 const AuthPage: FC = () => {
   const [isSignin, setIsSignin] = useState<boolean>(true);
 
-  const methods: UseFormReturn = useForm({
-    resolver: zodResolver(validationSchema),
-  });
-  const { control, handleSubmit, formState: { errors } } = methods;
+  const methods: UseFormReturn = useForm(isSignin ?
+    { resolver: zodResolver(validationSchemaLogin) } :
+    { resolver: zodResolver(validationSchemaSignUp) });
 
   const onSignIn = useCallback(async (data: any) => {
-    // if(data.password !== data.repeatPassword) control.setError('repeatPassword', {message: 'uuuuu'});
-    console.log(data)
-    // try {
-    //   const createdUser = await Database.createUser(data.email, data.password, data.name, data.isAuthor);
-    // } catch (err: any) {
-    //   if (err.response.status === 401) {
+    try {
+      const user = await Database.signin(data.email, data.password);
+    } catch (err: any) {
+      if (err.response.status === 401) {
 
-    //   }
-    //   else if (err.response.status === 0) {
+      }
+      else if (err.response.status === 0) {
 
-    //   }
-    //   else {
+      }
+      else {
 
-    //   };
-    // }
+      };
+    }
   }, [])
 
   const onSignUp = useCallback(async (data: any) => {
-    console.log('Signup')
-    // try {
-    //   const user = await Database.signin(data.email, data.password);
-    // } catch (err: any) {
-    //   if (err.response.status === 401) {
+    console.log('SignUp', data)
+    try {
+      const createdUser = await Database.createUser(data.email, data.password, data.name, data.isAuthor);
+    } catch (err: any) {
+      if (err.response.status === 401) {
 
-    //   }
-    //   else if (err.response.status === 0) {
+      }
+      else if (err.response.status === 0) {
 
-    //   }
-    //   else {
+      }
+      else {
 
-    //   };
-    // }
+      };
+    }
   }, [])
 
   return (
@@ -78,7 +73,8 @@ const AuthPage: FC = () => {
       isSignin ? onSignIn : onSignUp}
       methods={methods} isSignIn={isSignin}
       switchIsSignIn={() => setIsSignin(!isSignin)
-    } />
+      }
+    />
   )
 };
 

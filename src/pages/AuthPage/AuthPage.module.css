@@ -1,0 +1,4 @@
+.errorNote {
+  font-size: 12px;
+  color: var(--dangerous);
+}

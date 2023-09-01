@@ -6,33 +6,34 @@ import routes from "../../routes";
 import storage from '../../data/storage';
 
 
-import { AppProps, Tokens, UserInfo } from "./App.type";
+import { AppProps, UserInfo } from "./App.type";
 
 import { AuthPage, AllPostsPage, NotFoundPage } from "../../pages";
+import AuthContext from "../../AuthContext";
 
 
 const App: FC<AppProps> = function App({history}) {
 
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [{ isAuthenticated, isAuthor }, setUser] = useState({
+    isAuthenticated: !!storage.getToken(),
+    isAuthor: false,
+  });
   const [{ isModal, title: modalTitle, message: modalMessage }, setModal] =
     useState({ isModal: false, title: "", message: "" });
-  const [isAuthenticated, setIsUserAuthenticated] = useState(
-    !!storage.getTokens()
-  );
-  const [avatar, setAvatar] = useState<string>("");
-  const [isAvatar, setIsAvatar] = useState<boolean>(true);
 
   const setIsAuthenticated = useCallback(
-    (isAuthenticated: boolean, tokens?: Tokens) => {
-      if (tokens) {
-        // axiosService.setAuthorizationHeader(tokens);
-        // storage.saveTokens(tokens);
+    (isAuthenticated: boolean, isAuthor: boolean, token?: string) => {
+      if (token) {
+        storage.saveToken(token);
       } else {
-        // axiosService.setAuthorizationHeader();
-        // storage.destroyTokens();
+        storage.destroyToken();
       }
 
-      // setIsUserAuthenticated(isAuthenticated);
+      setUser({
+        isAuthenticated,
+        isAuthor,
+      });
     },
     []
   );
@@ -44,13 +45,19 @@ const App: FC<AppProps> = function App({history}) {
   }, [isAuthenticated]);
 
   return (
-    <>
+    <AuthContext.Provider
+    value={{
+      isAuthenticated,
+      isAuthor,
+      setIsAuthenticated,
+    }}
+  >
       <Routes>
         <Route path={routes.AUTH_SIGNIN} element={<AuthPage />} />
         <Route path={routes.POSTS} element={<AllPostsPage />} />
         <Route path={routes.NOT_FOUND} element={<NotFoundPage />} />
       </Routes>
-    </>
+      </AuthContext.Provider>
   );
 };
 

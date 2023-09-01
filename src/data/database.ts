@@ -14,10 +14,11 @@ class Database {
     this.init();
     const { data, error } = await this.supabase!.auth.signUp({
       email,
-      password, options: {
+      password,
+      options: {
         data: {
-          name,
-          isAuthor,
+          name: name,
+          isAuthor: isAuthor,
         }
       }
     });
