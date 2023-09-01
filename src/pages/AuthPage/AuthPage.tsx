@@ -1,11 +1,13 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useContext, useState } from 'react';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import AuthPageLayout from './AuthPageLayout';
+import AuthPageLayout from './AuthLayout';
 import Database from '../../data/database';
 
 import { UseFormReturn, useForm } from 'react-hook-form';
+import AppContext from '../../context/AppContext';
+import errorMessage from '../../services/errorMessage';
 
 const validationSchemaSignUp = z.object({
   name: z.string().min(2, 'String must contain at list 2 characters'),
@@ -29,6 +31,7 @@ const validationSchemaLogin = z.object({
 });
 
 const AuthPage: FC = () => {
+  const { setModal } = useContext(AppContext);
   const [isSignin, setIsSignin] = useState<boolean>(true);
 
   const methods: UseFormReturn = useForm(isSignin ?
@@ -38,35 +41,30 @@ const AuthPage: FC = () => {
   const onSignIn = useCallback(async (data: any) => {
     try {
       const user = await Database.signin(data.email, data.password);
+      console.log(user)
     } catch (err: any) {
-      if (err.response.status === 401) {
-
-      }
-      else if (err.response.status === 0) {
-
-      }
-      else {
-
-      };
+      console.log(err.Error)
+      setModal({ isModal: true, ...errorMessage.SIGNIN_FAILED });
     }
-  }, [])
+  }, [Database, setModal])
 
   const onSignUp = useCallback(async (data: any) => {
     console.log('SignUp', data)
     try {
       const createdUser = await Database.createUser(data.email, data.password, data.name, data.isAuthor);
-    } catch (err: any) {
-      if (err.response.status === 401) {
-
+      if (createdUser.user) {
+        setModal({ isModal: true, title: 'Sign up was succeed!', message: 'Check up your email to confirm access.' });
       }
-      else if (err.response.status === 0) {
 
+    } catch (err: any) {
+      if (err.response.status === 0) {
+        setModal({ isModal: true, ...errorMessage.NO_INTERNET });
       }
       else {
-
+        setModal({ isModal: true, ...errorMessage.generateGenericError(err) });
       };
     }
-  }, [])
+  }, [setModal, Database])
 
   return (
     <AuthPageLayout onSubmit={

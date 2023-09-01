@@ -32,7 +32,7 @@ type AuthT = {
   methods: UseFormReturn;
 }
 
-const AuthPageLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods }) => {
+const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods }) => {
   const [showPassword, setShowPassword] = React.useState(false);
   const { control, handleSubmit, formState: { errors } } = methods;
   const [values, setValues] = useState({
@@ -193,4 +193,4 @@ const AuthPageLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods
   )
 };
 
-export default AuthPageLayout;
+export default AuthLayout;

@@ -4,7 +4,7 @@ import { TAuthContext } from './AuthContext.type';
 
 const authContext = createContext<TAuthContext>({
   isAuthenticated: false,
-  isTeacher: undefined,
+  isAuthor: false,
   setIsAuthenticated: (isAuthenticated: boolean) => {
     console.log(isAuthenticated);
   },

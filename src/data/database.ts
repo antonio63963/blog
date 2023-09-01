@@ -23,7 +23,7 @@ class Database {
       }
     });
     console.log('CreateUser: ', data);
-    if (data) {
+    if (!error) {
       return data;
     } else {
       throw new Error(error?.message);
@@ -37,7 +37,7 @@ class Database {
       password,
     });
     console.log('Signin: ', data, error);
-    if (data) {
+    if (!error) {
       return data;
     } else {
       throw new Error(error?.message);
