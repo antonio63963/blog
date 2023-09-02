@@ -46,7 +46,9 @@ class Database {
       throw new Error(error?.message);
     }
   }
-  static async insertArticle(title: string, text: string, authorId: string) {
+
+  //articles
+  static async insertArticle(title: string, text: string, authorId: string, authorName: string) {
     this.init();
 
     if (!this.supabase) throw new Error('Not opend DB');
@@ -54,18 +56,47 @@ class Database {
       .insert({
         title,
         text,
-        comments: [],
+        authorName,
         authorId
       });
-    console.log('Signin: ', error);
-
+    console.log('Insert Art: ', error);
+    return error;
   }
+  
+  static async getArticlesList() {
+    this.init();
+
+    if (!this.supabase) throw new Error('Not opend DB');
+    const { data, error } = await this.supabase!.from('articles')
+      .select();
+    console.log('Get List Art: ', data);
+    return data;
+  }
+
+  static async getArticleById(id: string) {
+    this.init();
+
+    if (!this.supabase) throw new Error('Not opend DB');
+    const { data, error } = await this.supabase!.from("articles").select().eq('id', id);
+    console.log('GetById: ', data);
+    if (error) throw new Error('error');
+    return data;
+  }
+
   static async logout() {
     this.init();
     if (!this.supabase) throw new Error('Not opend DB');
     const { error } = await this.supabase!.auth.signOut();
-    if(error) throw new Error('Logout was failed...');
+    if (error) throw new Error('Logout was failed...');
   }
+  static async users() {
+    this.init();
+    if (!this.supabase) throw new Error('Not opend DB');
+    const { error } = await this.supabase!.auth.admin.listUsers();
+    if (error) throw new Error('Logout was failed...');
+  }
+
+
 }
 
 export default Database;

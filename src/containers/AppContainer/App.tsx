@@ -13,6 +13,8 @@ import AuthContext from "../../context/AuthContext";
 import AppContext from "../../context/AppContext";
 
 import MyModal from "../../components/MyModal";
+import { Article } from "../../context/AppContext/AppContext.type";
+import ArticlePage from "../../pages/ArcticlePage/ArticlePage";
 
 
 const App: FC<AppProps> = function App({ history }) {
@@ -20,9 +22,12 @@ const App: FC<AppProps> = function App({ history }) {
     isAuthenticated: !!storage.getToken(),
     isAuthor: false,
   });
+
   const [{ isModal, title: modalTitle, message: modalMessage }, setModal] =
     useState({ isModal: false, title: "", message: "" });
 
+  const [articlesList, setArticlesList] = useState<Article[]>([]);
+  
   const setIsAuthenticated = useCallback(
     (isAuthenticated: boolean, isAuthor: boolean, token?: string) => {
       if (token) {
@@ -60,6 +65,8 @@ const App: FC<AppProps> = function App({ history }) {
         value={{
           isModal,
           setModal,
+          articlesList,
+          setArticlesList
         }}
       >
         <MyModal
@@ -71,6 +78,7 @@ const App: FC<AppProps> = function App({ history }) {
         <Routes>
           <Route path={routes.AUTH_SIGNIN} element={<AuthPage />} />
           <Route path={routes.POSTS} element={<AllPostsPage />} />
+          <Route path={routes.POST_SHOW} element={<ArticlePage />} />
           <Route path={routes.NOT_FOUND} element={<NotFoundPage />} />
         </Routes>
       </AppContext.Provider>

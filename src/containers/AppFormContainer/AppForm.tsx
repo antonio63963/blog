@@ -43,11 +43,13 @@ const AppForm: FC<TForm> = ({ isAuthor, isOpen, onClose }) => {
 
   //ARTICLE
   const onArticle = useCallback(async (data: {title: string; text: string}) => {
-    const {id} = storage.getUserInfo();
+    const {id, name} = storage.getUserInfo();
     console.log(data.title, data.text, id)
     try {
-      const resp = await Database.insertArticle(data.title, data.text, id);
-      
+      const error = await Database.insertArticle(data.title, data.text, id, name);
+      if(!error) {
+        onClose();
+      }
     } catch (err: any) {
       console.log(err.Error)
       setModal({ isModal: true, ...errorMessage.SIGNIN_FAILED });

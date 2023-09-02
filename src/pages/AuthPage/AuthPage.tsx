@@ -18,7 +18,6 @@ const validationSchemaSignUp = z.object({
   email: z.string().email().transform((val) => val.trim()),
   password: z.string().min(6),
   repeatPassword: z.string().min(6),
-  isAuthor: z.boolean()
 }).superRefine(({ repeatPassword, password }, ctx) => {
   if (repeatPassword !== password) {
     ctx.addIssue({
@@ -68,9 +67,9 @@ const AuthPage: FC = () => {
   }, [Database, setModal])
 // SIGN UP
   const onSignUp = useCallback(async (data: any) => {
-    console.log('SignUp', data)
+    console.log('SignUp', values)
     try {
-      const createdUser = await Database.createUser(data.email, data.password, data.name, data.isAuthor);
+      const createdUser = await Database.createUser(values.email, values.password, values.name, values.isAuthor);
       if (createdUser.user) {
         setModal({ isModal: true, title: 'Sign up was succeed!', message: 'Check up your email to confirm access.' });
         setValues(initValues);

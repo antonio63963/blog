@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Masonry } from "@mui/lab";
 import { Avatar, Box, Button, Container, Paper, SxProps, Typography } from "@mui/material/";
@@ -8,7 +8,9 @@ import storage from '../../data/storage';
 import AuthContext from "../../context/AuthContext";
 import routes from "../../routes";
 import MyModal from "../../components/MyModal";
-import AppForm from "../../containers/AppForm/AppForm";
+import AppForm from "../../containers/AppFormContainer/AppForm";
+import Database from "../../data/database";
+import { Article } from "../../context/AppContext/AppContext.type";
 
 const classes: { [key: string]: SxProps } = {
   root: { height: '100vh', display: 'flex', flexDirection: 'column' },
@@ -21,69 +23,6 @@ const classes: { [key: string]: SxProps } = {
   create: { alignSelf: 'flex-end' },
 }
 
-const articles = [
-  {
-    id: '1',
-    authorId: '1',
-    name: 'Frank',
-    title: 'Supabase',
-    text: 'Masonry maintains a list of content blocks with a consistent width but different height. The contents are ordered by row. If a row is already filled with the specified number of columns, the next item starts another row, and it is added to the shortest column in order to optimize the use of space.',
-    comments: [
-
-    ]
-  },
-  {
-    id: '2',
-    authorId: '2',
-    name: 'Dave',
-    title: 'Supabase',
-    text: `Image masonry This example demonstrates the use of Masonry for images. Masonry orders its children by row. If you'd like to order images by column, check out ImageList.`,
-    comments: [
-
-    ]
-  },
-  {
-    id: '3',
-    authorId: '1',
-    name: 'Frank',
-    title: 'Supabase',
-    text: 'Masonry maintains a list of content blocks with a consistent width but different height. The contents are ordered by row. If a row is already filled with the specified number of columns, the next item starts another row, and it is added to the shortest column in order to optimize the use of space.',
-    comments: [
-
-    ]
-  },
-  {
-    id: '4',
-    authorId: '3',
-    name: 'Ann',
-    title: 'Supabase',
-    text: 'Masonry lays out contents of varying dimensions as blocks of the same width and different height with configurable gaps.',
-    comments: [
-
-    ]
-  },
-  {
-    id: '5',
-    authorId: '2',
-    name: 'Dave',
-    title: 'Supabase',
-    text: 'Masonry maintains a list of content blocks with a consistent width but different height. The contents are ordered by row. If a row is already filled with the specified number of columns, the next item starts another row, and it is added to the shortest column in order to optimize the use of space.',
-    comments: [
-
-    ]
-  },
-  {
-    id: '6',
-    authorId: '1',
-    name: 'Frank',
-    title: 'Supabase',
-    text: 'Masonry maintains a list of content blocks with a consistent width but different height. The contents are ordered by row. If a row is already filled with the specified number of columns, the next item starts another row, and it is added to the shortest column in order to optimize the use of space.',
-    comments: [
-
-    ]
-  },
-];
-
 function getRandomHeight() {
   const heights = [
     150, 175, 200, 230, 250
@@ -91,17 +30,29 @@ function getRandomHeight() {
   return heights[Math.floor(Math.random() * heights.length)];
 }
 const AllPostsPage: FC = () => {
-  const { isAuthor, name } = storage.getUserInfo();
-  const navigator = useNavigate();
+  const [artList, setArtList] = useState<Article[]>([]);
   const [isShownForm, setIsShownForm] = useState<boolean>(false);
-  // const user: { [x: string]: string } = storage.getUserInfo();
 
-  useEffect(() => {
-    if(!name) {
-      navigator(routes.AUTH_SIGNIN);
+  const { isAuthor, name, id } = storage.getUserInfo();
+  const navigator = useNavigate();
+
+
+  const getArticlesList = useCallback(async () => {
+    const resp: Article[] | null = await Database.getArticlesList();
+    if (resp) {
+      setArtList(resp);
     }
   }, [])
-  console.log(name, isAuthor);
+
+  useEffect(() => {
+    if (!name) {
+      navigator(routes.AUTH_SIGNIN);
+    }
+  }, [name, navigator]);
+
+  useEffect(() => {
+    getArticlesList();
+  }, [name, navigator]);
 
   function onLogOut() {
     storage.clearStorage();
@@ -128,22 +79,27 @@ const AllPostsPage: FC = () => {
       </Container>
 
       <Masonry columns={3} spacing={2}>
-        {articles.map((art, index) => (
+        {artList.map((art, index) => (
           <Paper key={index} sx={{ ...classes.paper, height: getRandomHeight() }}>
             <Container sx={classes.titleRow}>
-              <Avatar sx={{ bgcolor: '#26C6DA' }}>{art.name.slice(0, 2)}</Avatar>
+              <Avatar sx={{ bgcolor: '#26C6DA' }}>{art.authorName.slice(0, 2)}</Avatar>
               <Typography sx={classes.title} id="modal-modal-title" variant="h6" component="h2" color={'#eee'}>
-                {art.name}
+                {art.authorName}
               </Typography>
             </Container>
             <Box component="div" textOverflow='ellepsis' overflow="hidden" sx={{ height: '100%', pl: 1, pr: 1, color: '#E0E0E0' }}>
               {art.text}
             </Box>
-            <Button className="showButton-paper" sx={{ alignSelf: 'flex-end' }}>Show</Button>
+            <Button className="showButton-paper" onClick={() => navigator(`/post/${art.authorId}`, { state: { artId: art.id } })} sx={{ alignSelf: 'flex-end' }}>Show</Button>
           </Paper>
         ))}
       </Masonry>
-      <Button onClick={() => setIsShownForm(true)} sx={classes.create} className="CreateArticle">Create an Article</Button>
+      {isAuthor && <Button
+        onClick={() => setIsShownForm(true)}
+        sx={classes.create}
+        className="CreateArticle">Create an Article
+      </Button>}
+      {/* <Button onClick={() => Database.getArticleById(id)} sx={classes.create} className="CreateArticle">test</Button> */}
     </Container>
   </>
 };
