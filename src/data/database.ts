@@ -62,7 +62,7 @@ class Database {
     console.log('Insert Art: ', error);
     return error;
   }
-  
+
   static async getArticlesList() {
     this.init();
 
@@ -94,6 +94,21 @@ class Database {
     if (!this.supabase) throw new Error('Not opend DB');
     const { error } = await this.supabase!.auth.admin.listUsers();
     if (error) throw new Error('Logout was failed...');
+  }
+  //comments
+  static async insertComment(artId: number, text: string, userId: string, userName: string) {
+    this.init();
+
+    if (!this.supabase) throw new Error('Not opend DB');
+    const { error } = await this.supabase!.from('comments')
+      .insert({
+        art_id: artId,
+        text,
+        user_name: userName,
+        user_id: userId
+      });
+    console.log('Insert Art: ', error);
+    return error;
   }
 
 

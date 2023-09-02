@@ -20,49 +20,50 @@ const validationSchemaArticle = z.object({
 });
 
 const validationSchemaComment = z.object({
-  title: z.string().email().transform((val) => val.trim()),
   text: z.string().min(6)
 });
 
-let initValues = {
+let initialValues = {
   title: '',
   text: '',
 };
 
-const AppForm: FC<TForm> = ({ isAuthor, isOpen, onClose }) => {
+const AppForm: FC<TForm> = ({ artId, isAuthor, isOpen, onClose }) => {
   const { setModal } = useContext(AppContext);
   const navigator = useNavigate();
 
-  const [values, setValues] = useState(initValues);
+  const [values, setValues] = useState(initialValues);
 
   const methods: UseFormReturn = useForm(
     isAuthor ?
-    { resolver: zodResolver(validationSchemaArticle) } :
-    { resolver: zodResolver(validationSchemaComment) }
+      { resolver: zodResolver(validationSchemaArticle) } :
+      { resolver: zodResolver(validationSchemaComment) }
   );
 
+  const { id, name } = storage.getUserInfo();
+
   //ARTICLE
-  const onArticle = useCallback(async (data: {title: string; text: string}) => {
-    const {id, name} = storage.getUserInfo();
-    console.log(data.title, data.text, id)
+  const onArticle = useCallback(async (data: { title: string; text: string }) => {
     try {
       const error = await Database.insertArticle(data.title, data.text, id, name);
-      if(!error) {
+      if (!error) {
         onClose();
       }
     } catch (err: any) {
-      console.log(err.Error)
       setModal({ isModal: true, ...errorMessage.SIGNIN_FAILED });
     }
   }, [Database, setModal])
+
   //COMMENT
   const onComment = useCallback(async (data: any) => {
-    console.log('SignUp', data)
+    console.log('SignUp', artId, values.text, id, name)
     try {
-      const createdUser = await Database.createUser(data.email, data.password, data.name, data.isAuthor);
-      if (createdUser.user) {
-        setModal({ isModal: true, title: 'Sign up was succeed!', message: 'Check up your email to confirm access.' });
-        setValues(initValues);
+      const error = await Database.insertComment(artId, values.text, id, name);
+      if (!error) {
+        setValues(initialValues);
+        onClose();
+      }else {
+        throw new Error('Something has gone worng... Try later.')
       }
 
     } catch (err: any) {
@@ -79,11 +80,16 @@ const AppForm: FC<TForm> = ({ isAuthor, isOpen, onClose }) => {
     <FormLayout
       isOpen={isOpen}
       methods={methods}
-      onClose={onClose}
+      onClose={() => {
+        onClose();
+        setValues(initialValues);
+      }
+      }
       // onSubmit={() => console.log('wowo')}
       onSubmit={isAuthor ? onArticle : onComment}
       setValue={(data: { [x: string]: any; }) => setValues((currentState) => ({ ...currentState, ...data }))}
       title={isAuthor ? 'New Article' : 'New Comment'}
+      isAuthor={isAuthor}
       values={values}
     />
   )

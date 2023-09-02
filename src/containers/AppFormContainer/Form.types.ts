@@ -13,9 +13,11 @@ type TUserForm = {
   onClose: () => void;
   setValue: (data: { [x: string]: any }) => void;
   values: TValues;
+  isAuthor: boolean;
 }
 
 type TForm = {
+  artId: number;
   isAuthor: boolean;
   isOpen: boolean;
   onClose: () => void;

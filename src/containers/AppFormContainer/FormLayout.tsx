@@ -23,8 +23,7 @@ const classes: { [key: string]: SxProps } = {
 }
 
 
-const InputForm: FC<TUserForm> = ({ isOpen, onClose, title, onSubmit, methods, setValue, values }) => {
-  const [showPassword, setShowPassword] = React.useState(false);
+const InputForm: FC<TUserForm> = ({ isOpen, onClose, title, onSubmit, methods, setValue, values, isAuthor }) => {
   const { control, handleSubmit, formState: { errors } } = methods;
 
   return (
@@ -41,26 +40,31 @@ const InputForm: FC<TUserForm> = ({ isOpen, onClose, title, onSubmit, methods, s
             <Typography id="modal-modal-title" variant="h6" component="h2">{title}</Typography>
           </Box>
 
-          <Controller
-            name="title"
-            control={control}
-            render={({ field: { onChange } }) => (
-              <TextField
-                sx={classes.input}
-                required
-                value={values.title}
-                onChange={(e: any) => {
-                  setValue({ title: e.target.value });
-                  onChange(e);
-                }}
-                variant="filled"
-                label="title"
+          {isAuthor && (
+            <>
+              <Controller
+                name="title"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <TextField
+                    sx={classes.input}
+                    required
+                    value={values.title}
+                    onChange={(e: any) => {
+                      setValue({ title: e.target.value });
+                      onChange(e);
+                    }}
+                    variant="filled"
+                    label="title"
+                  />
+                )}
               />
-            )}
-          />
-          {errors.name &&
-            <ShowZodError errMessage={errors.name.message as string} />
-          }
+              {errors.name &&
+                <ShowZodError errMessage={errors.name.message as string} />
+              }
+            </>
+          )}
+
           <Controller
             name="text"
             control={control}
@@ -74,16 +78,19 @@ const InputForm: FC<TUserForm> = ({ isOpen, onClose, title, onSubmit, methods, s
                   onChange(e);
                 }}
                 variant="filled"
-                label="article"
+                label={isAuthor ? "article" : "comment"}
+                multiline
+                maxRows={4}
               />
             )}
           />
           {errors.name && <ShowZodError errMessage={errors.name.message as string} />}
 
+
           <Button sx={classes.submit} type="submit">Submit</Button>
         </Card>
       </form>
-    </Modal>
+    </Modal >
   )
 };
 

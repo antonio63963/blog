@@ -1,6 +1,6 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react';
 
-import { PageContentContainer } from '../../containers';
+import AppForm from '../../containers/AppFormContainer/AppForm';
 import { Article } from '../../context/AppContext/AppContext.type';
 import Database from '../../data/database';
 import { Avatar, Box, Button, Container, Divider, SxProps, TextField, Typography } from '@mui/material';
@@ -51,6 +51,14 @@ const ArticlePage: FC = () => {
 
   return (
     <>
+      {/* Form leave comment */}
+      <AppForm
+        isAuthor={isAuthor}
+        isOpen={isShownForm}
+        onClose={() => setIsShownForm(false)}
+        artId={location?.state.artId}
+      />
+      {/* Content */}
       <Container sx={classes.root}>
         <Container fixed sx={classes.header}>
           <Container sx={classes.titleRow}>
@@ -65,7 +73,7 @@ const ArticlePage: FC = () => {
             <Button onClick={onLogout}>Log Out</Button>
           </Box>
         </Container>
-      
+
         <Container sx={classes.art}>
           <Typography sx={classes.title} id="title-art" variant="h6" component="h2" color={'#eee'}>
             {article?.title}
@@ -74,13 +82,13 @@ const ArticlePage: FC = () => {
             {article?.text}
           </Typography>
         </Container>
-      
+
         {!isAuthor && <Button
           onClick={() => setIsShownForm(true)}
           sx={classes.create}
           className="CreateArticle">Leave Comment
         </Button>}
-      
+
         {/* <Container className='comment-box' sx={classes.commentBox}>
           <Typography sx={classes.commentBoxTitle}>
             Leave your comment

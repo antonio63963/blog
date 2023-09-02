@@ -15,8 +15,9 @@ import { Article } from "../../context/AppContext/AppContext.type";
 const classes: { [key: string]: SxProps } = {
   root: { height: '100vh', display: 'flex', flexDirection: 'column' },
   header: { width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 },
-  headerNameWrapper: { display: 'flex', },
-  headerUserName: { color: '#E0E0E0' },
+  userNameWrapper: { display: 'flex', alignItems: 'center', justifyContent: 'flex-end' },
+  headerUserName: { color: '#E0E0E0', mr: 6, ml: 2 },
+
   titleRow: { width: '100%', display: 'flex', alignItems: 'center', mb: 1 },
   title: { color: '#BDBDBD', ml: 1 },
   paper: { display: 'flex', flexDirection: 'column', background: '#37474F', pt: 2, pb: 2 },
@@ -60,18 +61,20 @@ const AllPostsPage: FC = () => {
   }
 
   return <>
+    {/* Form new article */}
     <AppForm
       isAuthor={isAuthor}
       isOpen={isShownForm}
       onClose={() => setIsShownForm(false)}
+      artId={0}
     />
-
+    {/* Content */}
     <Container sx={classes.root}>
       <Container fixed sx={classes.header}>
         <Typography id="modal-modal-title" variant="h6" component="h2" color='#E0E0E0'>
           All Posts
         </Typography>
-        <Box className="user-name-warapper" sx={classes.headerNameWrapper}>
+        <Box className="user-name-warapper" sx={classes.userNameWrapper}>
           <Avatar sx={{ bgcolor: '#26C6DA' }}>{name?.slice(0, 2) ?? 'XXX'}</Avatar>
           <Typography className="user-name" sx={classes.headerUserName}>{name ?? 'XXX'}</Typography>
           <Button onClick={onLogOut}>Log Out</Button>
