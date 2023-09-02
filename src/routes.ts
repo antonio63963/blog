@@ -1,6 +1,6 @@
 class Routes {
   AUTH_SIGNIN = "/auth/login";
-  POSTS = "/";
+  POSTS = "/posts";
   POST_SHOW = "/post/:id";
   NOT_FOUND = "/404";
 }

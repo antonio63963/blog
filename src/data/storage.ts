@@ -6,6 +6,12 @@ type Tokens = {
   refreshToken: string;
 };
 
+type UserInfo = {
+  id: string;
+  name: string;
+  isAuthor: boolean;
+};
+
 class LStorage {
    getToken() {
     return window.localStorage.getItem(ACCESS_TOKEN);
@@ -18,6 +24,17 @@ class LStorage {
   destroyToken() {
     window.localStorage.removeItem(ACCESS_TOKEN);
   }
+
+  saveUserInfo(user: UserInfo) {
+    const json = JSON.stringify(user);
+    window.localStorage.setItem(USER_INFO, json);
+  }
+
+  getUserInfo() {
+    const json = window.localStorage.getItem(USER_INFO);
+    return json ? JSON.parse(json) : {id: null, name: null, isAuthor: false};
+  }
+  
   clearStorage() {
     window.localStorage.clear();
   }

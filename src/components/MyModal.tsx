@@ -30,7 +30,6 @@ const Alert: FC<TAlert> = ({ isOpen, handleClose, title, message }) => {
     sx={classes.root}
     >
     <Card sx={classes.body}>
-    
       <Typography id="modal-modal-title" variant="h6" component="h2">
         {title}
       </Typography>

@@ -11,7 +11,7 @@ import { AppProps, UserInfo } from "./App.type";
 import { AuthPage, AllPostsPage, NotFoundPage } from "../../pages";
 import AuthContext from "../../context/AuthContext";
 import AppContext from "../../context/AppContext";
-import { Modal } from "@mui/material";
+
 import MyModal from "../../components/MyModal";
 
 
@@ -40,10 +40,13 @@ const App: FC<AppProps> = function App({ history }) {
   );
 
   useEffect(() => {
+    console.log(isAuthenticated)
     if (!isAuthenticated) {
       history.push(routes.AUTH_SIGNIN);
+    } else {
+      history.push(routes.POSTS);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, history]);
 
   return (
     <AuthContext.Provider

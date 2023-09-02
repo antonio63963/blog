@@ -20,6 +20,14 @@ const classes: { [key: string]: SxProps } = {
   },
 }
 
+type TValues = {
+  name: string;
+  email: string;
+  password: string;
+  repeatPassword: string;
+  isAuthor: boolean;
+}
+
 type AuthT = {
   onSubmit: (data: any) => void;
   switchIsSignIn: () => void;
@@ -29,19 +37,14 @@ type AuthT = {
   // formErrors: {
   //   [x: string]: any;
   // };
+  values: TValues
+  setValue: (data: { [x: string]: any }) => void;
   methods: UseFormReturn;
 }
 
-const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods }) => {
+const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods, values, setValue }) => {
   const [showPassword, setShowPassword] = React.useState(false);
   const { control, handleSubmit, formState: { errors } } = methods;
-  const [values, setValues] = useState({
-    name: '',
-    email: '',
-    password: '',
-    repeatPassword: '',
-    isAuthor: false
-  }); // to avoid react swear on none control
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -68,7 +71,7 @@ const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods }) 
                   required
                   value={values.name}
                   onChange={(e) => {
-                    setValues((currentState) => ({ ...currentState, name: e.target.value }));
+                    setValue({ name: e.target.value });
                     onChange(e);
                   }}
                   variant="filled"
@@ -78,7 +81,8 @@ const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods }) 
             />
             {errors.name && (
               <span className={cn(styles.errorNote)}>{errors.name.message as string}</span>
-            )}</>}
+            )}
+          </>}
 
           <Controller
             name="email"
@@ -90,7 +94,7 @@ const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods }) 
                 required
                 value={values.email}
                 onChange={(e) => {
-                  setValues((currentState) => ({ ...currentState, email: e.target.value }));
+                  setValue({ email: e.target.value });
                   onChange(e);
                 }}
                 variant="filled"
@@ -110,7 +114,7 @@ const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods }) 
                 required
                 value={values.password}
                 onChange={(e) => {
-                  setValues((currentState) => ({ ...currentState, password: e.target.value }));
+                  setValue({ password: e.target.value });
                   onChange(e);
                 }}
                 type={showPassword ? 'text' : 'password'}
@@ -143,7 +147,7 @@ const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods }) 
                   required
                   value={values.repeatPassword}
                   onChange={(e) => {
-                    setValues((currentState) => ({ ...currentState, repeatPassword: e.target.value }));
+                    setValue({ repeatPassword: e.target.value });
                     onChange(e);
                   }}
                   type={showPassword ? 'text' : 'password'}
@@ -174,22 +178,21 @@ const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods }) 
                   <Checkbox
                     value={values.isAuthor}
                     onChange={(e: { target: { value: any; }; }) => {
-                      setValues((currentState) => ({ ...currentState, isAuthor: e.target.value }));
+                      setValue({ isAuthor: e.target.value });
                       onChange(e);
                     }}
                   />
                 )}
               />
             } />
-            </>}
-
+          </>}
 
           <Button sx={classes.submit} type="submit">Submit</Button>
 
         </Card>
       </form>
       {/* </FormProvider> */}
-    </Container> 
+    </Container>
   )
 };
 

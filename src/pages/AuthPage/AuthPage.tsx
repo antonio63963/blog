@@ -1,13 +1,17 @@
 import React, { FC, useCallback, useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { UseFormReturn, useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import AppContext from '../../context/AppContext';
+
+import errorMessage from '../../services/errorMessage';
+import storage from '../../data/storage';
+import routes from '../../routes';
+
 import AuthPageLayout from './AuthLayout';
 import Database from '../../data/database';
-
-import { UseFormReturn, useForm } from 'react-hook-form';
-import AppContext from '../../context/AppContext';
-import errorMessage from '../../services/errorMessage';
 
 const validationSchemaSignUp = z.object({
   name: z.string().min(2, 'String must contain at list 2 characters'),
@@ -30,30 +34,46 @@ const validationSchemaLogin = z.object({
   password: z.string().min(6)
 });
 
+let initValues = {
+  name: '',
+  email: '',
+  password: '',
+  repeatPassword: '',
+  isAuthor: false
+};
+
 const AuthPage: FC = () => {
   const { setModal } = useContext(AppContext);
+  const navigator = useNavigate();
   const [isSignin, setIsSignin] = useState<boolean>(true);
+  const [values, setValues] = useState(initValues);
 
   const methods: UseFormReturn = useForm(isSignin ?
     { resolver: zodResolver(validationSchemaLogin) } :
     { resolver: zodResolver(validationSchemaSignUp) });
 
+    //SIGN IN
   const onSignIn = useCallback(async (data: any) => {
     try {
       const user = await Database.signin(data.email, data.password);
-      console.log(user)
+     if(user.session) {
+      storage.saveToken(user.session.access_token);
+      storage.saveUserInfo({id: user.user.id, name: user.user.user_metadata.name, isAuthor: user.user.user_metadata.isAuthor});
+      navigator(routes.POSTS);
+     }
     } catch (err: any) {
       console.log(err.Error)
       setModal({ isModal: true, ...errorMessage.SIGNIN_FAILED });
     }
   }, [Database, setModal])
-
+// SIGN UP
   const onSignUp = useCallback(async (data: any) => {
     console.log('SignUp', data)
     try {
       const createdUser = await Database.createUser(data.email, data.password, data.name, data.isAuthor);
       if (createdUser.user) {
         setModal({ isModal: true, title: 'Sign up was succeed!', message: 'Check up your email to confirm access.' });
+        setValues(initValues);
       }
 
     } catch (err: any) {
@@ -70,8 +90,9 @@ const AuthPage: FC = () => {
     <AuthPageLayout onSubmit={
       isSignin ? onSignIn : onSignUp}
       methods={methods} isSignIn={isSignin}
-      switchIsSignIn={() => setIsSignin(!isSignin)
-      }
+      switchIsSignIn={() => setIsSignin(!isSignin)}
+      values={values}
+      setValue={(data) => setValues((currentState) => ({ ...currentState, ...data }))}
     />
   )
 };

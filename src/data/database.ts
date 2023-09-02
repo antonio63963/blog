@@ -1,12 +1,15 @@
 import { SupabaseClient, createClient } from '@supabase/supabase-js'
-import { log } from 'console';
+import { error, log } from 'console';
+//N24ct5MPkVF8mdBu
+const anon = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpcmt1dWF2dW10c293bWVqYnlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTM2NDY2MzksImV4cCI6MjAwOTIyMjYzOX0.F-JaUXe9KKfOJIwix_QgH2llB0h7o3pgrDJBLkmYsMU'
+const url = 'https://eirkuuavumtsowmejbyl.supabase.co'
 
 class Database {
   static supabase?: SupabaseClient<any, "public", any>;
 
   static init() {
     if (!this.supabase) {
-      this.supabase = createClient('https://acvdagwufzucfidnnnwp.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjdmRhZ3d1Znp1Y2ZpZG5ubndwIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTMzOTczMDksImV4cCI6MjAwODk3MzMwOX0.400fJipWDuch-rQDmNLk5O8fF4T6H0ETS2iTdmYgvAc');
+      this.supabase = createClient(url, anon);
     }
   }
 
@@ -42,6 +45,26 @@ class Database {
     } else {
       throw new Error(error?.message);
     }
+  }
+  static async insertArticle(title: string, text: string, authorId: string) {
+    this.init();
+
+    if (!this.supabase) throw new Error('Not opend DB');
+    const { error } = await this.supabase!.from('articles')
+      .insert({
+        title,
+        text,
+        comments: [],
+        authorId
+      });
+    console.log('Signin: ', error);
+
+  }
+  static async logout() {
+    this.init();
+    if (!this.supabase) throw new Error('Not opend DB');
+    const { error } = await this.supabase!.auth.signOut();
+    if(error) throw new Error('Logout was failed...');
   }
 }
 
