@@ -1,15 +1,14 @@
 import { SupabaseClient, createClient } from '@supabase/supabase-js'
-import { error, log } from 'console';
 //N24ct5MPkVF8mdBu
-const anon = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpcmt1dWF2dW10c293bWVqYnlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTM2NDY2MzksImV4cCI6MjAwOTIyMjYzOX0.F-JaUXe9KKfOJIwix_QgH2llB0h7o3pgrDJBLkmYsMU'
-const url = 'https://eirkuuavumtsowmejbyl.supabase.co'
+
 
 class Database {
   static supabase?: SupabaseClient<any, "public", any>;
 
   static init() {
-    if (!this.supabase) {
-      this.supabase = createClient(url, anon);
+    console.log(process.env.REACT_APP_DB, process.env.REACT_APP_ANON)
+    if (!this.supabase ) {
+      this.supabase = createClient( process.env.REACT_APP_DB!, process.env.REACT_APP_ANON!);
     }
   }
 
@@ -77,11 +76,6 @@ class Database {
     this.init();
 
     if (!this.supabase) throw new Error('Not opend DB');
-  //   const { data, error } = await this.supabase!.from("comments").select().eq('art_id', id).select(`
-  //   id, 
-  //   text, user_id, user_name, 
-  //   articles ( id, title, text, authorName )
-  // `);
     const { data, error } = await this.supabase!.from("articles").select().eq('id', id).select(`
     id, 
     title,
