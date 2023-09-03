@@ -11,6 +11,7 @@ import MyModal from "../../components/MyModal";
 import AppForm from "../../containers/AppFormContainer/AppForm";
 import Database from "../../data/database";
 import { Article } from "../../context/AppContext/AppContext.type";
+import AppContext from "../../context/AppContext";
 
 const classes: { [key: string]: SxProps } = {
   root: { height: '100vh', display: 'flex', flexDirection: 'column' },
@@ -30,8 +31,11 @@ function getRandomHeight() {
   ]
   return heights[Math.floor(Math.random() * heights.length)];
 }
+
+
 const AllPostsPage: FC = () => {
-  const [artList, setArtList] = useState<Article[]>([]);
+  const {articlesList, setArticlesList} = useContext(AppContext);
+  // const [artList, setArtList] = useState<Article[]>([]);
   const [isShownForm, setIsShownForm] = useState<boolean>(false);
 
   const { isAuthor, name, id } = storage.getUserInfo();
@@ -41,7 +45,7 @@ const AllPostsPage: FC = () => {
   const getArticlesList = useCallback(async () => {
     const resp: Article[] | null = await Database.getArticlesList();
     if (resp) {
-      setArtList(resp);
+      setArticlesList(resp);
     }
   }, [])
 
@@ -82,7 +86,7 @@ const AllPostsPage: FC = () => {
       </Container>
 
       <Masonry columns={3} spacing={2}>
-        {artList.map((art, index) => (
+        {articlesList.map((art, index) => (
           <Paper key={index} sx={{ ...classes.paper, height: getRandomHeight() }}>
             <Container sx={classes.titleRow}>
               <Avatar sx={{ bgcolor: '#26C6DA' }}>{art.authorName.slice(0, 2)}</Avatar>

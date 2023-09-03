@@ -77,7 +77,19 @@ class Database {
     this.init();
 
     if (!this.supabase) throw new Error('Not opend DB');
-    const { data, error } = await this.supabase!.from("articles").select().eq('id', id);
+  //   const { data, error } = await this.supabase!.from("comments").select().eq('art_id', id).select(`
+  //   id, 
+  //   text, user_id, user_name, 
+  //   articles ( id, title, text, authorName )
+  // `);
+    const { data, error } = await this.supabase!.from("articles").select().eq('id', id).select(`
+    id, 
+    title,
+    text,
+    authorName,
+    authorId,
+    comments ( id, text, user_id, user_name )
+  `);
     console.log('GetById: ', data);
     if (error) throw new Error('error');
     return data;
@@ -103,7 +115,7 @@ class Database {
     const { error } = await this.supabase!.from('comments')
       .insert({
         art_id: artId,
-        text,
+        text: text,
         user_name: userName,
         user_id: userId
       });
