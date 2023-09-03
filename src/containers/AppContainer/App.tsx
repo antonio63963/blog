@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import routes from "../../routes";
 
@@ -8,11 +8,11 @@ import storage from '../../data/storage';
 
 import { AppProps, UserInfo } from "./App.type";
 
-import { AuthPage, AllPostsPage, NotFoundPage } from "../../pages";
+import { AuthPage, AllPostsPage } from "../../pages";
 import AuthContext from "../../context/AuthContext";
 import AppContext from "../../context/AppContext";
 
-import MyModal from "../../components/MyModal";
+import MyModal from "../../components/MyModal/MyModal";
 import { Article } from "../../context/AppContext/AppContext.type";
 import ArticlePage from "../../pages/ArcticlePage/ArticlePage";
 
@@ -79,7 +79,6 @@ const App: FC<AppProps> = function App({ history }) {
           <Route path={routes.AUTH_SIGNIN} element={<AuthPage />} />
           <Route path={routes.POSTS} element={<AllPostsPage />} />
           <Route path={routes.POST_SHOW} element={<ArticlePage />} />
-          <Route path={routes.NOT_FOUND} element={<NotFoundPage />} />
         </Routes>
       </AppContext.Provider>
     </AuthContext.Provider>

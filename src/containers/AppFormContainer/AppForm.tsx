@@ -13,7 +13,8 @@ import routes from '../../routes';
 import Database from '../../data/database';
 import FormLayout from './FormLayout';
 import { TForm } from './Form.types';
-import { UserComment } from '../../pages/ArcticlePage/Article.types';
+import { UserComment } from '../../pages/ArcticlePage/ArticlePage.types';
+import { Article } from '../../context/AppContext/AppContext.type';
 
 const validationSchemaArticle = z.object({
   title: z.string().min(3, 'String must contain at list 3 characters'),
@@ -29,7 +30,7 @@ let initialValues = {
   text: '',
 };
 
-const AppForm: FC<TForm> = ({ artId, isAuthor, isOpen, onClose, addComment }) => {
+const AppForm: FC<TForm> = ({ artId, isAuthor, isOpen, onClose, addItem }) => {
   const { setModal } = useContext(AppContext);
   const navigator = useNavigate();
 
@@ -48,6 +49,7 @@ const AppForm: FC<TForm> = ({ artId, isAuthor, isOpen, onClose, addComment }) =>
     try {
       const error = await Database.insertArticle(data.title, data.text, id, name);
       if (!error) {
+        addItem({ authorId: id, title: data.title, text: data.text, authorName: name } as Article);
         onClose();
       }
     } catch (err: any) {
@@ -60,8 +62,8 @@ const AppForm: FC<TForm> = ({ artId, isAuthor, isOpen, onClose, addComment }) =>
     console.log('Comment', artId, data.text, id, name)
     try {
       const error = await Database.insertComment(artId, data.text, id, name);
-      if (!error && addComment) {
-        addComment({ id: artId, text: data.text, user_id: id, user_name: name });
+      if (!error) {
+        addItem({ id: artId, text: data.text, user_id: id, user_name: name });
         setValues(initialValues);
         onClose();
       } else {

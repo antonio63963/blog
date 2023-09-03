@@ -1,46 +1,11 @@
-import React, { FC, useState } from "react";
-import { Box, Button, Card, Checkbox, Container, FilledInput, FormControlLabel, FormGroup, IconButton, InputAdornment, InputLabel, SxProps, TextField } from "@mui/material/";
-import { Control, Controller, FieldValues, FormProvider, UseFormReturn, useForm } from "react-hook-form";
-import { CheckBox, Label, Visibility, VisibilityOff } from "@mui/icons-material";
+import React, { FC } from "react";
+import { Box, Button, Card, Checkbox, Container, FilledInput, FormControlLabel, IconButton, InputAdornment, TextField } from "@mui/material/";
+import { Controller } from "react-hook-form";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-import styles from './AuthPage.module.css';
-import cn from 'classnames';
-
-const classes: { [key: string]: SxProps } = {
-  root: { height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  titleRow: { width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 0 },
-  switchMode: { background: 'none', p: 0, fontSize: 12, '&:hover': { background: 'none', color: '#80DEEA' } },
-  input: { mt: 2, mb: 2 },
-  card: { display: 'flex', flexDirection: 'column', width: '100%', minWidth: 320, p: 4, height: '100%' },
-  submit: {
-    alignSelf: 'flex-end', pt: 1, pb: 1, pl: 2, pr: 2, '&:hover': {
-      background: '#80DEEA',
-      color: '#fff',
-    }
-  },
-}
-
-type TValues = {
-  name: string;
-  email: string;
-  password: string;
-  repeatPassword: string;
-  isAuthor: boolean;
-}
-
-type AuthT = {
-  onSubmit: (data: any) => void;
-  switchIsSignIn: () => void;
-  isSignIn: boolean;
-  // control: Control<FieldValues, any>;
-  // // handleSubmit: (data: FieldValues) => void;
-  // formErrors: {
-  //   [x: string]: any;
-  // };
-  values: TValues
-  setValue: (data: { [x: string]: any }) => void;
-  methods: UseFormReturn;
-}
+import { ShowZodError } from "../../components";
+import { AuthT } from "./Auth.types";
+import classes from "./Auth.styles";
 
 const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods, values, setValue }) => {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -53,12 +18,16 @@ const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods, va
 
   return (
     <Container sx={classes.root}>
-      {/* <FormProvider {...methods}> */}
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card sx={classes.card}>
           <Box sx={classes.titleRow}>
             <h1 className="title">{isSignIn ? 'Sign In' : 'Sign Up'}</h1>
-            <Button sx={classes.switchMode} onClick={switchIsSignIn}>{isSignIn ? 'Sign Up' : 'Sign In'}</Button>
+            <Button
+              sx={classes.switchMode}
+              onClick={switchIsSignIn}
+            >
+              {isSignIn ? 'Sign Up' : 'Sign In'}
+            </Button>
           </Box>
 
           {!isSignIn && <>
@@ -79,9 +48,7 @@ const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods, va
                 />
               )}
             />
-            {errors.name && (
-              <span className={cn(styles.errorNote)}>{errors.name.message as string}</span>
-            )}
+            {errors.name && <ShowZodError errMessage={errors.name.message as string} />}
           </>}
 
           <Controller
@@ -102,9 +69,8 @@ const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods, va
               />
             )}
           />
-          {errors.email && (
-            <span className={cn(styles.errorNote)}>{errors.email.message as string}</span>
-          )}
+          {errors.email && <ShowZodError errMessage={errors.email.message as string} />}
+
           <Controller
             name="password"
             control={control}
@@ -133,9 +99,7 @@ const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods, va
               />
             )}
           />
-          {errors.password && (
-            <span className={cn(styles.errorNote)}>{errors.password.message as string}</span>
-          )}
+          {errors.password && <ShowZodError errMessage={errors.password.message as string} />}
 
           {!isSignIn && <>
             <Controller
@@ -166,9 +130,7 @@ const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods, va
                 />
               )}
             />
-            {errors.repeatPassword && (
-              <span className={cn(styles.errorNote)}>{errors.repeatPassword.message as string}</span>
-            )}
+            {errors.repeatPassword && <ShowZodError errMessage={errors.repeatPassword.message as string} />}
 
             <FormControlLabel label='Are you author?' control={
               <Controller
@@ -191,7 +153,6 @@ const AuthLayout: FC<AuthT> = ({ onSubmit, switchIsSignIn, isSignIn, methods, va
 
         </Card>
       </form>
-      {/* </FormProvider> */}
     </Container>
   )
 };

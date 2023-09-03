@@ -11,8 +11,9 @@ const classes: { [key: string]: SxProps } = {
   paper: { display: 'flex', flexDirection: 'column', background: '#37474F', pt: 2, pb: 2 },
   create: { alignSelf: 'flex-end', mt: 4 },
 
+  commentsBox: { mt: 6 },
   commentBoxTitle: { mb: 2, ml: 2, color: '#BDBDBD' },
-  comment: {color: '#BDBDBD'},
+  comment: { color: '#BDBDBD' },
 };
 
 export default classes;

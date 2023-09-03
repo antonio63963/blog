@@ -23,12 +23,20 @@ type UserComment = {
   user_name: string;
 }
 
+type Article = {
+  id: number;
+  title: string;
+  text: string;
+  authorId: number;
+  authorName: string;
+}
+
 type TForm = {
   artId: number;
   isAuthor: boolean;
   isOpen: boolean;
   onClose: () => void;
-  addComment?: (data: UserComment) => void;
+  addItem: (data: any) => void;
 }
 
 export type {
