@@ -5,7 +5,6 @@ import { TMasonryItem } from './MasonryItem.types';
 import classes from './MasonryItem.styles';
 
 const MasonryItem: FC<TMasonryItem> = ({
-  key,
   artId,
   height,
   title,
@@ -14,7 +13,7 @@ const MasonryItem: FC<TMasonryItem> = ({
   goToArticle
 }) => {
   return (
-    <Paper key={key} sx={{ ...classes.paper, height: height }}>
+    <Paper sx={{ ...classes.paper, height: height }}>
       <Container sx={classes.titleRow}>
         <Avatar sx={{ bgcolor: '#26C6DA' }}>{authorName.slice(0, 2)}</Avatar>
         <Typography sx={classes.title} id="modal-modal-title" variant="h6" component="h2" color={'#eee'}>

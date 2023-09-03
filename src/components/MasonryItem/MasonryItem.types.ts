@@ -1,5 +1,4 @@
 type TMasonryItem = {
-  key: number;
   artId: number;
   height: number;
   title: string;
