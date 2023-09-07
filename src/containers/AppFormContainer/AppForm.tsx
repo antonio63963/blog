@@ -1,5 +1,4 @@
-import React, { FC, useCallback, useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { FC, useCallback, useContext, useState } from 'react';
 import { UseFormReturn, useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,12 +7,10 @@ import AppContext from '../../context/AppContext';
 
 import errorMessage from '../../services/errorMessage';
 import storage from '../../data/storage';
-import routes from '../../routes';
 
 import Database from '../../data/database';
 import FormLayout from './FormLayout';
 import { TForm } from './Form.types';
-import { UserComment } from '../../pages/ArcticlePage/ArticlePage.types';
 import { Article } from '../../context/AppContext/AppContext.type';
 
 const validationSchemaArticle = z.object({
@@ -32,7 +29,6 @@ let initialValues = {
 
 const AppForm: FC<TForm> = ({ artId, isAuthor, isOpen, onClose, addItem }) => {
   const { setModal } = useContext(AppContext);
-  const navigator = useNavigate();
 
   const [values, setValues] = useState(initialValues);
 
@@ -55,7 +51,7 @@ const AppForm: FC<TForm> = ({ artId, isAuthor, isOpen, onClose, addItem }) => {
     } catch (err: any) {
       setModal({ isModal: true, ...errorMessage.SIGNIN_FAILED });
     }
-  }, [Database, setModal])
+  }, [addItem, id, name, onClose, setModal])
 
   //COMMENT
   const onComment = useCallback(async (data: any) => {
@@ -73,7 +69,7 @@ const AppForm: FC<TForm> = ({ artId, isAuthor, isOpen, onClose, addItem }) => {
     } catch (err: any) {
       setModal({ isModal: true, ...errorMessage.generateGenericError(err) });
     }
-  }, [setModal])
+  }, [addItem, artId, id, name, onClose, setModal])
 
   return (
     <FormLayout
@@ -84,7 +80,6 @@ const AppForm: FC<TForm> = ({ artId, isAuthor, isOpen, onClose, addItem }) => {
         setValues(initialValues);
       }
       }
-      // onSubmit={() => console.log('wowo')}
       onSubmit={isAuthor ? onArticle : onComment}
       setValue={(data: { [x: string]: any; }) => setValues((currentState) => ({ ...currentState, ...data }))}
       title={isAuthor ? 'New Article' : 'New Comment'}

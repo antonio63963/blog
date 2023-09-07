@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useState } from 'react';
+import { FC, useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UseFormReturn, useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -64,7 +64,7 @@ const AuthPage: FC = () => {
       console.log(err.Error)
       setModal({ isModal: true, ...errorMessage.SIGNIN_FAILED });
     }
-  }, [Database, setModal])
+  }, [navigator, setModal])
 // SIGN UP
   const onSignUp = useCallback(async (data: any) => {
     console.log('SignUp', values)
@@ -83,7 +83,7 @@ const AuthPage: FC = () => {
         setModal({ isModal: true, ...errorMessage.generateGenericError(err) });
       };
     }
-  }, [setModal, Database])
+  }, [values, setModal])
 
   return (
     <AuthPageLayout onSubmit={

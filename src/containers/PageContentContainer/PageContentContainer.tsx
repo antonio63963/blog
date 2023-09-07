@@ -16,7 +16,7 @@ const PageContentContainer: FC<{ children: ReactNode }> = ({ children }) => {
     storage.clearStorage();
     setIsAuthenticated(false, false);
     navigator(routes.AUTH_SIGNIN);
-  }, []);
+  }, [navigator, setIsAuthenticated]);
 
   return <PageContentLayout
     name={name ?? 'XXX'}

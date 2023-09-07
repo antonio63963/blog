@@ -1,8 +1,8 @@
 class Routes {
-  AUTH_SIGNIN = "/auth/login";
-  POSTS = "/posts";
-  POST_SHOW = "/post/:id";
-  NOT_FOUND = "/404";
+  static AUTH_SIGNIN = "/auth/login";
+  static POSTS = "/posts";
+  static POST_SHOW = "/post/:id";
+  static NOT_FOUND = "/404";
 }
 
-export default new Routes();
+export default Routes;

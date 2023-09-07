@@ -6,7 +6,7 @@ import routes from "../../routes";
 import storage from '../../data/storage';
 
 
-import { AppProps, UserInfo } from "./App.type";
+import { AppProps } from "./App.type";
 
 import { AuthPage, AllPostsPage } from "../../pages";
 import AuthContext from "../../context/AuthContext";

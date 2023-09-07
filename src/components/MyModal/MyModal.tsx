@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Button, Card, Modal, SxProps, Typography } from '@mui/material';
+import { Button, Card, Modal, Typography } from '@mui/material';
 
 import classes from './MyModal.styles';
 import { TAlert } from './MyModar.types';

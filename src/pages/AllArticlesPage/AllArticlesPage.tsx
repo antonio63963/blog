@@ -1,8 +1,5 @@
 import { FC, useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Masonry } from "@mui/lab";
-import { Avatar, Box, Button, Container, Paper, SxProps, Typography } from "@mui/material/";
-
 
 import storage from '../../data/storage';
 import routes from "../../routes";
@@ -17,7 +14,7 @@ const AllArticlesPage
     const { articlesList, setArticlesList } = useContext(AppContext);
     const [isShownForm, setIsShownForm] = useState<boolean>(false);
 
-    const { isAuthor, name, id } = storage.getUserInfo();
+    const { isAuthor, name } = storage.getUserInfo();
     const navigator = useNavigate();
 
 
@@ -26,7 +23,7 @@ const AllArticlesPage
       if (resp) {
         setArticlesList(resp);
       }
-    }, []);
+    }, [setArticlesList]);
 
     const addArticle = (data: Article): Article[] => [data, ...articlesList];
 
@@ -38,7 +35,7 @@ const AllArticlesPage
 
     useEffect(() => {
       getArticlesList();
-    }, [name, navigator]);
+    }, [getArticlesList, name, navigator]);
 
     const onLogout = useCallback(() => {
       storage.clearStorage();
@@ -69,5 +66,4 @@ const AllArticlesPage
     </>
   };
 
-export default AllArticlesPage
-  ;
+export default AllArticlesPage;

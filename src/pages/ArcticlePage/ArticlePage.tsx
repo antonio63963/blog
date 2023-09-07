@@ -15,7 +15,7 @@ const ArticlePage: FC = () => {
   const navigator = useNavigate();
   const location: any = useLocation();
   const { setIsAuthenticated } = useContext(authContext);
-  const { name, id, isAuthor } = storage.getUserInfo();
+  const { name, isAuthor } = storage.getUserInfo();
   const [article, setAtricle] = useState<Article>();
   const [comments, setComments] = useState<UserComment[]>([]);
   const [isShownForm, setIsShownForm] = useState<boolean>(false);
@@ -25,17 +25,17 @@ const ArticlePage: FC = () => {
     const { comments, ...article } = data[0];
     setAtricle(article);
     setComments(comments);
-  }, []);
+  }, [location?.state.artId]);
 
   const onLogout = useCallback(() => {
     storage.clearStorage();
     setIsAuthenticated(false, false);
     navigator(routes.AUTH_SIGNIN);
-  }, []);
+  }, [navigator, setIsAuthenticated]);
 
   useEffect(() => {
     getArticle();
-  }, []);
+  }, [getArticle]);
 
   return (
     <>

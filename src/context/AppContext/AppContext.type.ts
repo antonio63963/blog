@@ -5,12 +5,6 @@ type Modal = {
   message: string;
 }
 
-type Comment = {
-  id: number;
-  userId: number;
-  text: string;
-}
-
 type Article = {
   id: number;
   title: string;

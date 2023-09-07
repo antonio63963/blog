@@ -1,10 +1,10 @@
 import { FC } from 'react';
-import { Avatar, Box, Button, Card, Container, List, ListItem, ListItemAvatar, ListItemText, SxProps, Typography } from '@mui/material';
+import { Avatar, Box, Button, Container, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
 
 import classes from './Article.styles';
-import {TPage} from './ArticlePage.types';
+import { TPage } from './ArticlePage.types';
 
-const ArticlesLayout: FC<TPage> = ({article, comments, userName, onLogout, openForm, isAuthor}) => {
+const ArticlesLayout: FC<TPage> = ({ article, comments, userName, onLogout, openForm, isAuthor }) => {
   return (
     <>
       <Container id="header-article" fixed sx={classes.header} disableGutters={true}>
@@ -43,7 +43,7 @@ const ArticlesLayout: FC<TPage> = ({article, comments, userName, onLogout, openF
             Comments:
           </Typography>
         </Box>
-        {comments.length == 0 && <Typography sx={{ color: "#eee" }}>No comments yet.</Typography>}
+        {comments.length === 0 && <Typography sx={{ color: "#eee" }}>No comments yet.</Typography>}
         <List>
           {comments.map((com, idx) => {
             return (

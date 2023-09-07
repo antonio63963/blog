@@ -16,21 +16,6 @@ type TUserForm = {
   isAuthor: boolean;
 }
 
-type UserComment = {
-  id: number;
-  user_id: number;
-  text: string;
-  user_name: string;
-}
-
-type Article = {
-  id: number;
-  title: string;
-  text: string;
-  authorId: number;
-  authorName: string;
-}
-
 type TForm = {
   artId: number;
   isAuthor: boolean;

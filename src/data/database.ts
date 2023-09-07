@@ -1,7 +1,6 @@
 import { SupabaseClient, createClient } from '@supabase/supabase-js'
 //N24ct5MPkVF8mdBu
 
-
 class Database {
   static supabase?: SupabaseClient<any, "public", any>;
 
@@ -69,6 +68,7 @@ class Database {
     const { data, error } = await this.supabase!.from('articles')
       .select();
     console.log('Get List Art: ', data);
+    if(error) throw new Error('Smth has gone wrong!');
     return data;
   }
 
@@ -116,8 +116,6 @@ class Database {
     console.log('Insert Art: ', error);
     return error;
   }
-
-
 }
 
 export default Database;
